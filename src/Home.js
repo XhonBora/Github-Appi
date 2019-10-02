@@ -1,74 +1,42 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { Link } from "react-router-dom";
-import Repos from "./Repos";
+import "./home.css";
 
 class Home extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      username: null,
-      reposList: []
+      username: null
     };
-  }
-
-  getUser(username) {
-    fetch(`https://api.github.com/users/${username}`)
-      .then(response => response.json())
-      .then(user => {
-        this.setState({
-          reposList: []
-        });
-      });
-
-    fetch(`https://api.github.com/users/${username}/repos`)
-      .then(res => res.json())
-      .then(repos => {
-        this.setState({
-          reposList: repos
-        });
-      });
   }
 
   async handleSubmit(e) {
     e.preventDefault();
-    await this.getUser(this.refs.username.value);
+    const username = this.refs.username.value;
+    this.props.history.push("/repos", { username: username });
   }
 
   render() {
     return (
-      <div>
+      <div className="content">
         <form onSubmit={e => this.handleSubmit(e)}>
-          <div>
-            <input ref="username" type="text" placeholder="username" />
-          </div>
-          <div>
+          <label className="details">
+            Jep Username:{" "}
+            <input
+              className="userbar"
+              ref="username"
+              type="text"
+              placeholder="Username"
+            />
+          </label>
+          <label>
             {" "}
             <button type="submit">Submit</button>
-          </div>
+          </label>
         </form>
-        <Repos reposList={this.state.reposList} />
       </div>
     );
   }
 }
 
 export default Home;
-
-{
-  /* 
-  fetch("/https://api.github.com/users/${username}/repos", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        reposList: this.reposList
-      })
-    })
-      .then(res => res.json())
-      .then(data => console.log(data))
-  .catch(err => console.log(err)); */
-}

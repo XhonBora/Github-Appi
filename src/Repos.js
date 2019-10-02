@@ -1,119 +1,67 @@
 import React, { Component } from "react";
+import "./repos.css";
 
-const Repos = ({ reposList }) => {
-  return (
-    <div>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Fullname</th>
-            <th>Owner</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reposList.map((repo, index) => {
-            return (
-              <tr key={index}>
-                <td>{repo.name}</td>
-                <td>{repo.full_name}</td>
-                <td>{repo.owner.login}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-export default Repos;
-
-{
-  /*
-        
-        
-
-  class Repos extends Component {
+class Repos extends Component {
   constructor(props) {
     super(props);
+
+    const { username } = this.props.location.state;
+    console.log(username);
+
     this.state = {
-      reposList: []
+      reposList: [],
+      username: username
     };
   }
 
-  renderTableData() {
-    return this.state.reposList.map(repo => {
-      const { name, fullname, owner } = repo;
+  componentDidMount() {
+    const { username } = this.state;
+    fetch(`https://api.github.com/users/${username}/repos`)
+      .then(response => response.json())
+      .then(repos => {
+        this.setState({
+          reposList: repos
+        });
+      });
+  }
+
+  userData() {
+    const { username, reposList } = this.state;
+    if (username) {
       return (
-        <tr>
-          <td>{name}</td>
-          <td>{fullname}</td>
-          <td>{owner}</td>
-        </tr>
+        <div className="container">
+          <table border="1">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Node_id</th>
+                <th>Name</th>
+                <th>Fullname</th>
+                <th>Owner.login</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reposList.map((repo, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{repo.id}</td>
+                    <td>{repo.node_id}</td>
+                    <td>{repo.name}</td>
+                    <td>{repo.full_name}</td>
+                    <td>{repo.owner.login}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       );
-    });
+    } else return null;
   }
 
   render() {
-    return (
-      <div>
-        <table>
-          <tbody>{this.renderTableData()}</tbody>
-        </table>
-      </div>
-    );
+    return <div>{this.userData()}</div>;
   }
 }
-        
-        
-         <div>
-      <ul>
-        <li>
-          <strong>Name: </strong> {name} || <strong>Fullname:</strong>{" "}
-          {fullname} || <strong>Owner:</strong> {owner}
-        </li>
-      </ul>
-    </div>*/
-}
 
-{
-  /*
-const Repos = ({ reposList }) => {
-  return (
-    <div>
-      <table border="1">
-        <tbody>
-          {reposList.map((repo, index) => {
-            return (
-              <tr key={index}>
-                <td>{repo.name}</td>
-                <td>{repo.full_name}</td>
-                <td>{repo.owner.login}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-*/
-}
-
-{
-  /* 
-  renderTableData() {
-    const { reposList } = this.state;
-    {
-      reposList &&
-        reposList.map(repo => (
-          <tr key={repo.id}>
-            <td>{repo.name}</td>
-            <td>{repo.full_name}</td>
-            <td>{repo.owner.login}</td>
-          </tr>
-        ));
-    }
-  } */
-}
+export default Repos;
